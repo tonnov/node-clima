@@ -1,6 +1,8 @@
 
 const lugar = require('./lugar/lugar');
 
+const clima = require('./clima/clima');
+
 const argv = require('yargs').options({
     direccion: {
         alias: 'd',
@@ -9,11 +11,21 @@ const argv = require('yargs').options({
     }
 }).argv;
 
-lugar.getLugarLatLng(argv.direccion)
-    .then( resp => {
-        console.log( resp );
-    })
-    .catch(e => console.log(e));
-//console.log(argv.direccion);
+let getInfo = async (direccion) => {
 
-// https://developers.google.com/maps/documentation/geocoding/start
+    try {
+        
+        let place = await lugar.getLugarLatLng(direccion);
+        let temper = await clima.getClima(place.lat, place.lng);
+
+        return `Ciudad: ${ place.direccion }, Temperatura: ${ temper.temp } celsius`;
+    
+    } catch (e) {
+        return `No se pudo determinar el clima en ${ direccion }`;
+    }
+
+}
+
+getInfo(argv.direccion)
+    .then( mensaje => console.log(mensaje))
+    .catch(e => console.log(e));
