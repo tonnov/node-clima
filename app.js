@@ -1,5 +1,5 @@
 
-const axios = require('axios');
+const lugar = require('./lugar/lugar');
 
 const argv = require('yargs').options({
     direccion: {
@@ -9,24 +9,11 @@ const argv = require('yargs').options({
     }
 }).argv;
 
+lugar.getLugarLatLng(argv.direccion)
+    .then( resp => {
+        console.log( resp );
+    })
+    .catch(e => console.log(e));
 //console.log(argv.direccion);
-
-let encodeUrl = encodeURI( argv.direccion );
-
-axios.get(`https://maps.googleapis.com/maps/api/geocode/json?address=${ encodeUrl }&key=AIzaSyCsPwBVaXTXxGUEGVXIgHxUDgTKi2w8BYc`)
-     .then( resp => {
-
-        let loc = resp.data.results[0];
-        let coords = loc.geometry.location;
-
-        console.log('\n');
-        console.log('Direccion: ',loc.formatted_address);
-        console.log('Lat:', coords.lat);
-        console.log('Lng:', coords.lng);
-         //console.log( JSON.stringify(resp.data, undefined, 2 ));
-         //console.log( resp.status );
-     })
-     .catch( e => console.log('Error: ', e));
-
 
 // https://developers.google.com/maps/documentation/geocoding/start
